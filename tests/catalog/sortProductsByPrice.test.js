@@ -22,9 +22,7 @@ describe('sortProductsByPrice', () => {
   };
 
   function getProductsByIds(ids) {
-    return ids
-      .map(id => products.find(p => p.id === id))
-      .filter(Boolean);
+    return products.filter(({ id }) => ids.includes(id));
   }
 
   test(`все товары c ${ascArg} сортируются как [${arrSortAsc}]`, () => {
