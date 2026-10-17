@@ -6,7 +6,7 @@ function notImplemented() {
 }
 
 function addToCart(cart, product, buyCount) {
-  if (!cart) cart = [];
+  cart = checkCart(cart);
   if (!checkProduct(product)) throw new TypeError('Продукт не распознан.');
   if (typeof buyCount !== 'number' || buyCount < 1 || buyCount > product.stock)
     throw new RangeError(`Столько товара (${buyCount}) нет на складе .`);
@@ -21,6 +21,8 @@ function addToCart(cart, product, buyCount) {
 }
 
 function changeQuantity(cart, productId, qty) {
+  cart = checkCart(cart);
+
   const product = getProduct(productId);
   if (!product) return cart;
 
@@ -33,15 +35,22 @@ function changeQuantity(cart, productId, qty) {
 }
 
 function removeFromCart(cart, productId) {
+  cart = checkCart(cart);
   return cart.filter(item => item.id !== productId);
 }
 
-function calculateCartSubtotal() {
-  return notImplemented();
+function calculateCartSubtotal(cart) {
+  cart = checkCart(cart);
+  return cart.reduce((total, p) => total + (p.price * p.quantity), 0);
 }
 
 function calculateOrderTotal() {
   return notImplemented();
+}
+
+
+function checkCart(cart) {
+  return !cart || !Array.isArray(cart) ? [] : cart;
 }
 
 function checkProduct(product) {
