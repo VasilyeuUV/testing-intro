@@ -1,13 +1,13 @@
-const products = require('./data/products');
-const { getProductById } = require('./catalog');
+// const products = require('./data/products');
+const warehouse = typeof require !== 'undefined' 
+  ? require('./data/products') 
+  : (typeof products !== 'undefined' ? products : []);
 
 const PROMO = 'SAVE10';
 const PROMO_PRICE = 20_000;
 const DISCOUNT = 0.1;
 const FREE_DELIVERY_PRICE = 50_000;
 const DELIVERY_PRICE = 30_000
-
-
 
 function notImplemented() {
   throw new Error('Корзина ещё не реализована. Сначала прочитайте тесты.');
@@ -77,7 +77,7 @@ function checkProduct(product) {
 }
 
 function getProduct(id) {
-  return products.find(p => p.id === id);
+  return warehouse.find(p => p.id === id);
 }
 
 function checkProductInCart(cart, productId) {
