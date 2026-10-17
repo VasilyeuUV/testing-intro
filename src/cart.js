@@ -1,6 +1,14 @@
 const products = require('./data/products');
 const { getProductById } = require('./catalog');
 
+const PROMO = 'SAVE10';
+const PROMO_PRICE = 20_000;
+const DISCOUNT = 0.1;
+const FREE_DELIVERY_PRICE = 50_000;
+const DELIVERY_PRICE = 30_000
+
+
+
 function notImplemented() {
   throw new Error('Корзина ещё не реализована. Сначала прочитайте тесты.');
 }
@@ -44,8 +52,19 @@ function calculateCartSubtotal(cart) {
   return cart.reduce((total, p) => total + (p.price * p.quantity), 0);
 }
 
-function calculateOrderTotal() {
-  return notImplemented();
+function calculateOrderTotal(cart, promo) {
+  cart = checkCart(cart);
+  const subtotal = calculateCartSubtotal(cart);
+  const delivery = subtotal < 1
+    ? 0
+    : subtotal < FREE_DELIVERY_PRICE ? DELIVERY_PRICE : 0;
+  const discount = subtotal < 1
+    ? 0
+    : promo === PROMO && subtotal >= PROMO_PRICE
+      ? subtotal * DISCOUNT
+      : 0;
+  const total = subtotal + delivery - discount;
+  return { subtotal, discount, delivery, total };
 }
 
 
