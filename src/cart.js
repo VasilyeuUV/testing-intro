@@ -12,20 +12,24 @@ function addToCart(cart, product, buyCount) {
     throw new RangeError(`Столько товара (${buyCount}) нет на складе .`);
 
   const cartProduct = checkProductInCart(cart, product.id);
-  const allBuyCount = cartProduct ? cartProduct.quantity + buyCount : buyCount;
-  if (allBuyCount > product.stock)
-    throw new RangeError(`Столько товара (${buyCount}) нет на складе .`);
-
   return cartProduct
-    ? addCartProductQuantity(cart, product.id, allBuyCount)
+    ? changeQuantity(cart, product.id, cartProduct.quantity + buyCount)
     : [
       ...cart,
-      createCartProduct(product, allBuyCount)
+      createCartProduct(product, buyCount)
     ];
 }
 
-function changeQuantity() {
-  return notImplemented();
+function changeQuantity(cart, productId, qty) {
+  const product = getProduct(productId);
+  if (!product) return cart;
+
+  if (typeof qty !== 'number' || qty < 1 || qty > product.stock)
+    throw new RangeError(`Столько товара (${qty}) нет на складе .`);
+
+  return cart.map(p =>
+    p.id === productId ? { ...p, quantity: qty } : p
+  )
 }
 
 function removeFromCart() {
@@ -44,6 +48,10 @@ function checkProduct(product) {
   return product !== null && typeof product === 'object' && 'id' in product;
 }
 
+function getProduct(id) {
+  return products.find(p => p.id === id);
+}
+
 function checkProductInCart(cart, productId) {
   return cart.find(p => p.id === productId);
 }
@@ -52,13 +60,6 @@ function createCartProduct(product, qty) {
   const { category, ...productInfo } = product;
   return { ...productInfo, quantity: qty };
 }
-
-function addCartProductQuantity(cart, productId, qty) {
-  return cart.map(p =>
-    p.id === productId ? { ...p, quantity: qty } : p
-  )
-}
-
 
 
 const cartApi = { addToCart, changeQuantity, removeFromCart, calculateCartSubtotal, calculateOrderTotal };
